@@ -4,7 +4,7 @@ A project for CSC-207.
 
 Authors:
 
-* Your Name Here
+* Nicole Moreno Gonzalez 
 * Samuel A. Rebelsky (starter code)
 
 ---
