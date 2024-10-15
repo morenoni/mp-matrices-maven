@@ -317,7 +317,7 @@ public interface Matrix<T> extends Cloneable {
    *
    * @return a copy of the matrix.
    */
-  public Matrix clone();
+  public Matrix<T> clone();
 
   /**
    * Determine if this object is equal to another object.

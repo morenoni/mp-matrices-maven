@@ -14,6 +14,23 @@ public class MatrixV0<T> implements Matrix<T> {
   // | Fields |
   // +--------+
 
+  /**
+   * Matrix declaration.
+   */
+  private T[][] contents;
+  /**
+   * Default value of the Matrix.
+   */
+  private T defaultValue;
+  /**
+   * Height of the Matrix.
+   */
+  private int height;
+  /**
+   * Width of the Matrix.
+   */
+  private int width;
+
   // +--------------+------------------------------------------------
   // | Constructors |
   // +--------------+
@@ -32,8 +49,20 @@ public class MatrixV0<T> implements Matrix<T> {
    * @throws NegativeArraySizeException
    *   If either the width or height are negative.
    */
+  @SuppressWarnings("unchecked")
   public MatrixV0(int width, int height, T def) {
-    // STUB
+    if (width < 0 || height < 0) {
+      throw new NegativeArraySizeException("Matrix dimensions must be non-negative.");
+    } // if
+    this.width = width;
+    this.height = height;
+    this.defaultValue = def;
+    this.contents = (T[][]) new Object[this.height][this.width];
+    for (int row = 0; row < this.height; row++) {
+      for (int col = 0; col < this.width; col++) {
+        this.contents[row][col] = this.defaultValue;
+      } // for
+    } // for
   } // MatrixV0(int, int, T)
 
   /**
@@ -69,8 +98,12 @@ public class MatrixV0<T> implements Matrix<T> {
    * @throws IndexOutOfBoundsException
    *   If either the row or column is out of reasonable bounds.
    */
+  @Override
   public T get(int row, int col) {
-    return null;        // STUB
+    if (row < 0 || row >= this.height || col < 0 || col >= this.width) {
+      throw new IndexOutOfBoundsException("Invalid row or column index.");
+    } // if
+    return this.contents[row][col];
   } // get(int, int)
 
   /**
@@ -86,8 +119,12 @@ public class MatrixV0<T> implements Matrix<T> {
    * @throws IndexOutOfBoundsException
    *   If either the row or column is out of reasonable bounds.
    */
+  @Override
   public void set(int row, int col, T val) {
-    // STUB
+    if (row < 0 || row >= this.height || col < 0 || col >= this.width) {
+      throw new IndexOutOfBoundsException("Invalid row or column index.");
+    } // if
+    this.contents[row][col] = val;
   } // set(int, int, T)
 
   /**
@@ -95,8 +132,9 @@ public class MatrixV0<T> implements Matrix<T> {
    *
    * @return the number of rows.
    */
+  @Override
   public int height() {
-    return 5;   // STUB
+    return this.height;
   } // height()
 
   /**
@@ -104,8 +142,9 @@ public class MatrixV0<T> implements Matrix<T> {
    *
    * @return the number of columns.
    */
+  @Override
   public int width() {
-    return 3;   // STUB
+    return this.width;
   } // width()
 
   /**
@@ -117,8 +156,21 @@ public class MatrixV0<T> implements Matrix<T> {
    * @throws IndexOutOfBoundsException
    *   If the row is negative or greater than the height.
    */
+  @Override
+  @SuppressWarnings("unchecked")
   public void insertRow(int row) {
-    // STUB
+    if (row < 0 || row > this.height) {
+      throw new IndexOutOfBoundsException("Row index out of bounds.");
+    } // if
+    T[][] newContents = (T[][]) new Object[this.height + 1][this.width];
+    System.arraycopy(this.contents, 0, newContents, 0, row);
+    newContents[row] = (T[]) new Object[this.width];
+    for (int col = 0; col < this.width; col++) {
+      newContents[row][col] = this.defaultValue;
+    } // for
+    System.arraycopy(this.contents, row, newContents, row + 1, this.height - row);
+    this.contents = newContents;
+    this.height++;
   } // insertRow(int)
 
   /**
@@ -134,8 +186,16 @@ public class MatrixV0<T> implements Matrix<T> {
    * @throws ArraySizeException
    *   If the size of vals is not the same as the width of the matrix.
    */
+  @Override
   public void insertRow(int row, T[] vals) throws ArraySizeException {
-    // STUB
+    if (row < 0 || row > this.height) {
+      throw new IndexOutOfBoundsException("Row index out of bounds.");
+    } // if
+    if (vals.length != this.width) {
+      throw new ArraySizeException("Array size does not match matrix width.");
+    } // if
+    this.insertRow(row);
+    System.arraycopy(vals, 0, this.contents[row], 0, this.width);
   } // insertRow(int, T[])
 
   /**
@@ -147,8 +207,20 @@ public class MatrixV0<T> implements Matrix<T> {
    * @throws IndexOutOfBoundsException
    *   If the column is negative or greater than the width.
    */
+  @Override
+  @SuppressWarnings("unchecked")
   public void insertCol(int col) {
-    // STUB
+    if (col < 0 || col > this.width) {
+      throw new IndexOutOfBoundsException("Column index out of bounds.");
+    } // if
+    for (int row = 0; row < this.height; row++) {
+      T[] newRow = (T[]) new Object[this.width + 1];
+      System.arraycopy(this.contents[row], 0, newRow, 0, col);
+      newRow[col] = this.defaultValue;
+      System.arraycopy(this.contents[row], col, newRow, col + 1, this.width - col);
+      this.contents[row] = newRow;
+    } // for
+    this.width++;
   } // insertCol(int)
 
   /**
@@ -164,8 +236,18 @@ public class MatrixV0<T> implements Matrix<T> {
    * @throws ArraySizeException
    *   If the size of vals is not the same as the height of the matrix.
    */
+  @Override
   public void insertCol(int col, T[] vals) throws ArraySizeException {
-    // STUB
+    if (col < 0 || col > this.width) {
+      throw new IndexOutOfBoundsException("Column index out of bounds.");
+    } // if
+    if (vals.length != this.height) {
+      throw new ArraySizeException("Array size does not match matrix height.");
+    } // if
+    this.insertCol(col);
+    for (int row = 0; row < this.height; row++) {
+      this.contents[row][col] = vals[row];
+    } // for
   } // insertCol(int, T[])
 
   /**
@@ -177,8 +259,17 @@ public class MatrixV0<T> implements Matrix<T> {
    * @throws IndexOutOfBoundsException
    *   If the row is negative or greater than or equal to the height.
    */
+  @Override
+  @SuppressWarnings("unchecked")
   public void deleteRow(int row) {
-    // STUB
+    if (row < 0 || row >= this.height) {
+      throw new IndexOutOfBoundsException("Row index out of bounds.");
+    } // if
+    T[][] newContents = (T[][]) new Object[this.height - 1][this.width];
+    System.arraycopy(this.contents, 0, newContents, 0, row);
+    System.arraycopy(this.contents, row + 1, newContents, row, this.height - row - 1);
+    this.contents = newContents;
+    this.height--;
   } // deleteRow(int)
 
   /**
@@ -190,8 +281,21 @@ public class MatrixV0<T> implements Matrix<T> {
    * @throws IndexOutOfBoundsException
    *   If the column is negative or greater than or equal to the width.
    */
+  @Override
+  @SuppressWarnings("unchecked")
   public void deleteCol(int col) {
-    // STUB
+    if (col < 0 || col >= this.width) {
+      throw new IndexOutOfBoundsException("Column index out of bounds.");
+    } // if
+    for (int row = 0; row < this.height; row++) {
+      T[] newRow = (T[]) new Object[this.width - 1];
+      // Copy elements before the deleted column
+      System.arraycopy(this.contents[row], 0, newRow, 0, col);
+      // Copy elements after the deleted column
+      System.arraycopy(this.contents[row], col + 1, newRow, col, this.width - col - 1);
+      this.contents[row] = newRow;
+    } // for
+    this.width--;
   } // deleteCol(int)
 
   /**
@@ -208,12 +312,20 @@ public class MatrixV0<T> implements Matrix<T> {
    * @param val
    *   The value to store.
    *
-   * @throw IndexOutOfBoundsException
+   * @throws IndexOutOfBoundsException
    *   If the rows or columns are inappropriate.
    */
+  @Override
   public void fillRegion(int startRow, int startCol, int endRow, int endCol,
       T val) {
-    // STUB
+    if (startRow < 0 || startCol < 0 || endRow > this.height || endCol > this.width) {
+      throw new IndexOutOfBoundsException("Region bounds are invalid.");
+    } // if
+    for (int row = startRow; row < endRow; row++) {
+      for (int col = startCol; col < endCol; col++) {
+        this.contents[row][col] = val;
+      } // for
+    } // for
   } // fillRegion(int, int, int, int, T)
 
   /**
@@ -234,12 +346,22 @@ public class MatrixV0<T> implements Matrix<T> {
    * @param val
    *   The value to store.
    *
-   * @throw IndexOutOfBoundsException
+   * @throws IndexOutOfBoundsException
    *   If the rows or columns are inappropriate.
    */
+  @Override
   public void fillLine(int startRow, int startCol, int deltaRow, int deltaCol,
       int endRow, int endCol, T val) {
-    // STUB
+    if (startRow < 0 || startCol < 0 || endRow > this.height || endCol > this.width) {
+      throw new IndexOutOfBoundsException("Line bounds are invalid.");
+    } // if
+    int row = startRow;
+    int col = startCol;
+    while (row < endRow && col < endCol) {
+      this.contents[row][col] = val;
+      row += deltaRow;
+      col += deltaCol;
+    } // while
   } // fillLine(int, int, int, int, int, int, T)
 
   /**
@@ -249,8 +371,13 @@ public class MatrixV0<T> implements Matrix<T> {
    *
    * @return a copy of the matrix.
    */
-  public Matrix clone() {
-    return this;        // STUB
+  @Override
+  public Matrix<T> clone() {
+    MatrixV0<T> copy = new MatrixV0<>(this.width, this.height, this.defaultValue);
+    for (int row = 0; row < this.height; row++) {
+      System.arraycopy(this.contents[row], 0, copy.contents[row], 0, this.width);
+    } // for
+    return copy;
   } // clone()
 
   /**
@@ -262,8 +389,27 @@ public class MatrixV0<T> implements Matrix<T> {
    * @return true if the other object is a matrix with the same width,
    * height, and equal elements; false otherwise.
    */
+  @Override
   public boolean equals(Object other) {
-    return this == other;       // STUB
+    if (!(other instanceof MatrixV0)) {
+      return false;
+    } // if
+    MatrixV0<?> otherMatrix = (MatrixV0<?>) other;
+    if (otherMatrix.width != this.width || otherMatrix.height != this.height) {
+      return false;
+    } // if
+    for (int row = 0; row < this.height; row++) {
+      for (int col = 0; col < this.width; col++) {
+        if (this.contents[row][col] == null) {
+          if (otherMatrix.contents[row][col] != null) {
+            return false;
+          } // if
+        } else if (!this.contents[row][col].equals(otherMatrix.contents[row][col])) {
+          return false;
+        } // else if
+      } // for
+    } // for
+    return true;
   } // equals(Object)
 
   /**
@@ -273,6 +419,7 @@ public class MatrixV0<T> implements Matrix<T> {
    *
    * @return the hash code.
    */
+  @Override
   public int hashCode() {
     int multiplier = 7;
     int code = this.width() + multiplier * this.height();
