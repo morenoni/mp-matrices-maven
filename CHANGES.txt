@@ -1,0 +1,3 @@
+Changes done for the redo:
+
+Updated README.md to include acknowledgements and valid links to repo. 
